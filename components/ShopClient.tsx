@@ -4,6 +4,7 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import ShopFilters from "./ShopFilters";
 import ProductCard, { Product } from "./ProductCard";
 import { supabase } from "@/lib/supabase";
+import Icon from "@/components/ui/AppIcon";
 
 const MOCK_PRODUCTS: Product[] = [
 { id: "p1", title: "Kind of Blue", artist: "Miles Davis", year: "1959", genre: "Jazz", price: 42.99, image: "https://img.rocket.new/generatedImages/rocket_gen_img_1ff35a7ca-1772478161065.png", alt: "Kind of Blue album cover with cool blue abstract tones", condition: "Near Mint", copies: 3, rating: 4.9, reviewCount: 214, isNew: false },
