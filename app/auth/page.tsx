@@ -34,7 +34,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/homepage" className="font-display text-3xl font-medium text-ink">
+          <Link href="/" className="font-display text-3xl font-medium text-ink">
             Zonetempo
           </Link>
           <p className="text-muted text-sm mt-2">Your vinyl record store</p>
@@ -117,7 +117,7 @@ export default function AuthPage() {
         </div>
 
         <p className="text-center text-sm text-muted mt-6">
-          <Link href="/homepage" className="hover:text-orange transition-colors">
+          <Link href="/" className="hover:text-orange transition-colors">
             ← Back to store
           </Link>
         </p>
