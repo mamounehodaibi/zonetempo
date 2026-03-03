@@ -12,16 +12,7 @@ const nextConfig = {
   images: {
     remotePatterns: imageHosts,
   },
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/',
-        permanent: false,
-      },
-    ];
-  },
-  webpack(config) {
+    webpack(config) {
     config.module.rules.push({
       test: /\.(jsx|tsx)$/,
       exclude: [/node_modules/],
