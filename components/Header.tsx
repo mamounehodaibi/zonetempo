@@ -12,7 +12,7 @@ interface CartItem {
 }
 
 const navLinks = [
-  { href: "/homepage", label: "Home" },
+  { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
@@ -79,7 +79,7 @@ export default function Header() {
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link href="/homepage" className="flex items-center gap-2.5 group">
+            <Link href="/" className="flex items-center gap-2.5 group">
               <AppLogo
                 size={36}
                 iconName="MusicalNoteIcon"
