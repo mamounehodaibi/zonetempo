@@ -1,12 +1,10 @@
 import React from 'react';
 import type { Metadata, Viewport } from 'next';
 import '../index.css';
-
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
 };
-
 export const metadata: Metadata = {
   title: 'Next.js with Tailwind CSS',
   description: 'A boilerplate project with Next.js and Tailwind CSS',
@@ -16,7 +14,6 @@ export const metadata: Metadata = {
     ],
   },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,10 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}
-
-        <script type="module" async src="https://static.rocket.new/rocket-web.js?_cfg=https%3A%2F%2Fzonetempo6748back.builtwithrocket.new&_be=https%3A%2F%2Fappanalytics.rocket.new&_v=0.1.17" />
-        <script type="module" defer src="https://static.rocket.new/rocket-shot.js?v=0.0.2" /></body>
+      <body>{children}</body>
     </html>
   );
 }
