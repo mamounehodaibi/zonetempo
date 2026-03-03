@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import ShopFilters from "./ShopFilters";
 import ProductCard, { Product } from "./ProductCard";
-import Icon from "@/components/ui/AppIcon";
+import { supabase } from "@/lib/supabase";
 
 const MOCK_PRODUCTS: Product[] = [
 { id: "p1", title: "Kind of Blue", artist: "Miles Davis", year: "1959", genre: "Jazz", price: 42.99, image: "https://img.rocket.new/generatedImages/rocket_gen_img_1ff35a7ca-1772478161065.png", alt: "Kind of Blue album cover with cool blue abstract tones", condition: "Near Mint", copies: 3, rating: 4.9, reviewCount: 214, isNew: false },
@@ -54,6 +54,8 @@ const defaultFilters: FiltersState = {
 };
 
 export default function ShopClient() {
+  const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
+  const [loading, setLoading] = useState(false);
   const [filters, setFilters] = useState<FiltersState>(defaultFilters);
   const [sortBy, setSortBy] = useState("featured");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -61,11 +63,36 @@ export default function ShopClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-
+useEffect(() => {
+    async function fetchProducts() {
+      setLoading(true);
+      const { data } = await supabase.from("products").select("*");
+      if (data && data.length > 0) {
+        const mapped = data.map((p) => ({
+          id: p.id,
+          title: p.title,
+          artist: p.artist,
+          year: String(p.year),
+          genre: p.genre,
+          price: p.price,
+          image: p.image_url || "",
+          alt: `${p.title} album cover`,
+          condition: "Mint",
+          copies: p.stock,
+          rating: p.rating,
+          reviewCount: 0,
+          isNew: false,
+        }));
+        setProducts(mapped);
+      }
+      setLoading(false);
+    }
+    fetchProducts();
+  }, []);
   const handleSearchChange = (val: string) => {
     setSearchQuery(val);
     if (val.length > 1) {
-      const suggestions = MOCK_PRODUCTS.
+     const suggestions = products.
       filter((p) =>
       p.title.toLowerCase().includes(val.toLowerCase()) ||
       p.artist.toLowerCase().includes(val.toLowerCase())
@@ -80,7 +107,7 @@ export default function ShopClient() {
   };
 
   const filteredProducts = useMemo(() => {
-    let result = [...MOCK_PRODUCTS];
+    let result = [...products];
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
