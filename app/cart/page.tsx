@@ -5,9 +5,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
-
+import { supabase } from "@/lib/supabase";
 export default function CartPage() {
-  const { items, updateQuantity, removeFromCart, loading } = useCart();
+  const { items, updateQuantity, removeFromCart, clearCart, loading } = useCart();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [codLoading, setCodLoading] = useState(false);
   const [codSuccess, setCodSuccess] = useState(false);
@@ -36,7 +36,28 @@ export default function CartPage() {
 
   const handleCOD = async () => {
     setCodLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: order } = await supabase
+        .from("orders")
+        .insert({ user_id: user?.id, total, status: "processing" })
+        .select()
+        .single();
+
+      if (order) {
+        await supabase.from("order_items").insert(
+          items.map((item) => ({
+            order_id: order.id,
+            product_id: item.product_id,
+            quantity: item.quantity,
+            price: item.price,
+          }))
+        );
+        await clearCart();
+      }
+    } catch (err) {
+      console.error(err);
+    }
     setCodLoading(false);
     setCodSuccess(true);
   };
