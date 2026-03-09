@@ -1,36 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-
-interface CartItem {
-  id: string;
-  title: string;
-  artist: string;
-  price: number;
-  image: string;
-  quantity: number;
-  condition: string;
-}
-
-const MOCK_CART: CartItem[] = [
-  { id: "p1", title: "Kind of Blue", artist: "Miles Davis", price: 42.99, image: "https://img.rocket.new/generatedImages/rocket_gen_img_1ff35a7ca-1772478161065.png", quantity: 1, condition: "Near Mint" },
-  { id: "p5", title: "Abbey Road", artist: "The Beatles", price: 49.99, image: "https://img.rocket.new/generatedImages/rocket_gen_img_1d23940e0-1770043784754.png", quantity: 1, condition: "Mint" },
-];
+import { useCart } from "@/lib/cart-context";
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>(MOCK_CART);
-
-  const updateQuantity = (id: string, qty: number) => {
-    if (qty < 1) return removeItem(id);
-    setItems((prev) => prev.map((i) => i.id === id ? { ...i, quantity: qty } : i));
-  };
-
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-  };
+  const { items, updateQuantity, removeFromCart, loading } = useCart();
 
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const shipping = subtotal > 75 ? 0 : 9.99;
@@ -42,7 +19,9 @@ export default function CartPage() {
       <main className="pt-24 pb-16">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="font-display text-4xl font-medium text-ink mb-8">Your Cart</h1>
-          {items.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-24 text-muted">Loading cart...</div>
+          ) : items.length === 0 ? (
             <div className="text-center py-24">
               <p className="text-muted text-lg mb-6">Your cart is empty.</p>
               <Link href="/shop" className="px-8 py-3 bg-orange text-white rounded-full font-medium hover:bg-orange-light transition-colors">Browse Records</Link>
@@ -64,7 +43,7 @@ export default function CartPage() {
                         <button onClick={() => updateQuantity(item.id, item.quantity - 1)} className="w-7 h-7 rounded-full border border-ink/20 flex items-center justify-center text-ink hover:border-orange hover:text-orange transition-colors">-</button>
                         <span className="w-6 text-center text-sm font-mono">{item.quantity}</span>
                         <button onClick={() => updateQuantity(item.id, item.quantity + 1)} className="w-7 h-7 rounded-full border border-ink/20 flex items-center justify-center text-ink hover:border-orange hover:text-orange transition-colors">+</button>
-                        <button onClick={() => removeItem(item.id)} className="ml-2 text-muted hover:text-red-500 transition-colors text-sm">x</button>
+                        <button onClick={() => removeFromCart(item.id)} className="ml-2 text-muted hover:text-red-500 transition-colors text-sm">x</button>
                       </div>
                     </div>
                   </div>
