@@ -15,6 +15,7 @@ export const metadata: Metadata = {
       { url: '/assets/images/zonetempo-logo.svg', type: 'image/svg+xml' }
     ],
   },
+};
 
 export default function RootLayout({
   children,
