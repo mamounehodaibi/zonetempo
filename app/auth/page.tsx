@@ -20,7 +20,7 @@ export default function AuthPage() {
     if (mode === "login") {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) setError(error.message);
-      else setMessage("Logged in successfully! Redirecting...");
+      else window.location.href = "/account";
     } else {
       const { error } = await supabase.auth.signUp({ email, password });
       if (error) setError(error.message);
