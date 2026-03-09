@@ -44,7 +44,7 @@ export default function Footer() {
   <img
     src="/assets/images/zonetempo-logo.svg"
     alt="Zonetempo"
-    className="h-12 w-auto brightness-0 invert"
+    className="h-12 w-auto"
   />
 </Link>
             <p className="text-sm text-cream/50 leading-relaxed max-w-xs mb-6">
