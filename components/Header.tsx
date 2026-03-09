@@ -83,7 +83,7 @@ export default function Header() {
   <img
     src="/assets/images/zonetempo-logo.svg"
     alt="Zonetempo"
-    className="h-10 w-auto group-hover:opacity-80 transition-opacity"
+    className="h-14 w-auto group-hover:opacity-80 transition-opacity"
   />
 </Link>
 
