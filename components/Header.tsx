@@ -79,14 +79,13 @@ export default function Header() {
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <AppLogo
-                size={36}
-                iconName="MusicalNoteIcon"
-                text="Zonetempo"
-                className="group-hover:opacity-80 transition-opacity"
-              />
-            </Link>
+            <Link href="/" className="flex items-center group">
+  <img
+    src="/assets/images/zonetempo-logo.svg"
+    alt="Zonetempo"
+    className="h-10 w-auto group-hover:opacity-80 transition-opacity"
+  />
+</Link>
 
             {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-8">
