@@ -12,10 +12,9 @@ export const metadata: Metadata = {
   description: 'Browse over 4,200 curated vinyl records. Jazz, rock, soul, and everything in between.',
   icons: {
     icon: [
-      { url: '/assets/images/app_logo.png', type: 'image/x-icon' }
+      { url: '/assets/images/zonetempo-logo.svg', type: 'image/svg+xml' }
     ],
   },
-};
 
 export default function RootLayout({
   children,
