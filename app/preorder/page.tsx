@@ -1,45 +1,62 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { supabase } from "@/lib/supabase";
 
-const INITIAL_REQUESTS = [
-  { id: 1, title: "Blonde", artist: "Frank Ocean", genre: "R&B", votes: 142, requestedBy: "marcus_vinyl" },
-  { id: 2, title: "Madvillainy", artist: "Madvillain", genre: "Hip-Hop", votes: 98, requestedBy: "cratedigger99" },
-  { id: 3, title: "In Rainbows", artist: "Radiohead", genre: "Alternative", votes: 87, requestedBy: "analogsoul" },
-  { id: 4, title: "Vespertine", artist: "Bjork", genre: "Electronic", votes: 64, requestedBy: "waxpoetic" },
-  { id: 5, title: "Sea Change", artist: "Beck", genre: "Folk", votes: 51, requestedBy: "needledrop" },
-];
+interface VinylRequest {
+  id: string;
+  title: string;
+  artist: string;
+  genre: string;
+  requested_by: string;
+  votes: number;
+  created_at: string;
+}
 
 export default function WishlistPage() {
-  const [requests, setRequests] = useState(INITIAL_REQUESTS);
-  const [voted, setVoted] = useState<number[]>([]);
+  const [requests, setRequests] = useState<VinylRequest[]>([]);
+  const [voted, setVoted] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ title: "", artist: "", genre: "", name: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ title: "", artist: "", genre: "", name: "" });
 
-  const handleVote = (id: number) => {
-    if (voted.includes(id)) return;
-    setVoted((prev) => [...prev, id]);
-    setRequests((prev) => prev.map((r) => r.id === id ? { ...r, votes: r.votes + 1 } : r).sort((a, b) => b.votes - a.votes));
+  useEffect(() => {
+    fetchRequests();
+  }, []);
+
+  const fetchRequests = async () => {
+    setLoading(true);
+    const { data } = await supabase.from("vinyl_requests").select("*").order("votes", { ascending: false });
+    if (data) setRequests(data);
+    setLoading(false);
   };
 
-  const handleSubmit = () => {
+  const handleVote = async (id: string) => {
+    if (voted.includes(id)) return;
+    setVoted((prev) => [...prev, id]);
+    const record = requests.find((r) => r.id === id);
+    if (!record) return;
+    await supabase.from("vinyl_requests").update({ votes: record.votes + 1 }).eq("id", id);
+    fetchRequests();
+  };
+
+  const handleSubmit = async () => {
     if (!form.title || !form.artist) return;
-    const newRequest = {
-      id: Date.now(),
+    await supabase.from("vinyl_requests").insert({
       title: form.title,
       artist: form.artist,
       genre: form.genre || "Other",
+      requested_by: form.name || "anonymous",
       votes: 1,
-      requestedBy: form.name || "anonymous",
-    };
-    setRequests((prev) => [newRequest, ...prev].sort((a, b) => b.votes - a.votes));
+    });
     setForm({ title: "", artist: "", genre: "", name: "" });
     setShowForm(false);
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 3000);
+    fetchRequests();
   };
 
   return (
@@ -47,30 +64,23 @@ export default function WishlistPage() {
       <Header />
       <main className="pt-24 pb-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          {/* Header */}
           <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <span className="section-label block mb-2">Community</span>
               <h1 className="font-display font-medium text-ink text-4xl md:text-5xl">Record Wishlist</h1>
               <p className="text-muted mt-3 max-w-xl">Request a record you want us to stock. Vote for the ones you love. We restock based on demand.</p>
             </div>
-            <button
-              onClick={() => setShowForm(!showForm)}
-              className="px-6 py-3 bg-orange text-white rounded-full font-semibold hover:bg-orange-light transition-colors text-sm flex-shrink-0"
-            >
+            <button onClick={() => setShowForm(!showForm)} className="px-6 py-3 bg-orange text-white rounded-full font-semibold hover:bg-orange-light transition-colors text-sm flex-shrink-0">
               + Request a Record
             </button>
           </div>
 
-          {/* Success message */}
           {submitted && (
             <div className="mb-6 px-4 py-3 bg-green-50 border border-green-200 rounded-xl text-green-600 text-sm font-medium">
               Your request has been submitted! Others can now vote for it.
             </div>
           )}
 
-          {/* Request Form */}
           {showForm && (
             <div className="bg-white rounded-2xl shadow-card p-6 mb-8">
               <h2 className="font-display font-medium text-ink text-xl mb-5">Request a Record</h2>
@@ -99,36 +109,38 @@ export default function WishlistPage() {
             </div>
           )}
 
-          {/* Requests List */}
-          <div className="space-y-3">
-            {requests.map((record, i) => (
-              <div key={record.id} className="bg-white rounded-2xl shadow-card p-5 flex items-center gap-5">
-                <div className="text-2xl font-display font-medium text-ink/20 w-8 text-center flex-shrink-0">
-                  {i + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-display font-medium text-ink text-lg leading-tight">{record.title}</h3>
-                  <p className="text-muted text-sm">{record.artist}</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-xs font-mono text-muted uppercase tracking-wider">{record.genre}</span>
-                    <span className="text-ink/20 text-xs">·</span>
-                    <span className="text-xs text-muted">by {record.requestedBy}</span>
+          {loading ? (
+            <div className="text-center py-16 text-muted">Loading requests...</div>
+          ) : requests.length === 0 ? (
+            <div className="text-center py-16">
+              <p className="text-muted mb-4">No requests yet. Be the first!</p>
+              <button onClick={() => setShowForm(true)} className="px-6 py-3 bg-orange text-white rounded-full font-semibold hover:bg-orange-light transition-colors text-sm">Request a Record</button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {requests.map((record, i) => (
+                <div key={record.id} className="bg-white rounded-2xl shadow-card p-5 flex items-center gap-5">
+                  <div className="text-2xl font-display font-medium text-ink/20 w-8 text-center flex-shrink-0">{i + 1}</div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-display font-medium text-ink text-lg leading-tight">{record.title}</h3>
+                    <p className="text-muted text-sm">{record.artist}</p>
+                    <div className="flex items-center gap-3 mt-1">
+                      <span className="text-xs font-mono text-muted uppercase tracking-wider">{record.genre}</span>
+                      <span className="text-ink/20 text-xs">·</span>
+                      <span className="text-xs text-muted">by {record.requested_by}</span>
+                    </div>
                   </div>
+                  <button
+                    onClick={() => handleVote(record.id)}
+                    className={`flex flex-col items-center gap-1 px-4 py-3 rounded-xl border transition-all flex-shrink-0 ${voted.includes(record.id) ? "bg-orange/10 border-orange text-orange" : "border-ink/10 text-muted hover:border-orange hover:text-orange"}`}
+                  >
+                    <span className="text-lg leading-none">{voted.includes(record.id) ? "▲" : "△"}</span>
+                    <span className="text-sm font-bold font-mono">{record.votes}</span>
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleVote(record.id)}
-                  className={`flex flex-col items-center gap-1 px-4 py-3 rounded-xl border transition-all flex-shrink-0 ${
-                    voted.includes(record.id)
-                      ? "bg-orange/10 border-orange text-orange"
-                      : "border-ink/10 text-muted hover:border-orange hover:text-orange"
-                  }`}
-                >
-                  <span className="text-lg leading-none">{voted.includes(record.id) ? "▲" : "△"}</span>
-                  <span className="text-sm font-bold font-mono">{record.votes}</span>
-                </button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </main>
       <Footer />
