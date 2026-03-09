@@ -66,7 +66,7 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
   if (viewMode === "list") {
     return (
       <Link
-        href="/product-details"
+        href={`/product/${product.id}`}
         className="group flex gap-4 p-4 bg-cream rounded-2xl hover:shadow-card transition-all duration-300 border border-ink/5 hover:border-ink/10"
       >
         <div className="relative w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden flex-shrink-0">
@@ -141,7 +141,7 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
 
   return (
     <Link
-      href="/product-details"
+      href={`/product/${product.id}`}
       className="group block bg-cream rounded-2xl overflow-hidden product-card border border-ink/5 hover:border-ink/10"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
