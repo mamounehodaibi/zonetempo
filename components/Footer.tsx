@@ -28,7 +28,43 @@ const socials = [
   { icon: "ChatBubbleLeftRightIcon", label: "Twitter", href: "#" },
   { icon: "PlayIcon", label: "YouTube", href: "#" },
 ];
+function NewsletterForm() {
+  const [email, setEmail] = React.useState("");
+  const [done, setDone] = React.useState(false);
 
+  const handleSubmit = async () => {
+    if (!email) return;
+    const { createClient } = await import("@supabase/supabase-js");
+    const sb = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    await sb.from("newsletter").insert({ email });
+    setDone(true);
+  };
+
+  if (done) return <p className="text-sm text-green-400">Thanks for subscribing!</p>;
+
+  return (
+    <div className="flex gap-2">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="your@email.com"
+        className="flex-1 px-3 py-2 bg-cream/10 border border-cream/10 rounded-xl text-sm text-cream placeholder-cream/30 outline-none focus:border-orange transition-colors"
+      />
+      <button
+        onClick={handleSubmit}
+        className="px-4 py-2 bg-orange text-white rounded-xl text-sm font-semibold hover:bg-orange-light transition-colors"
+      >
+        Join
+      </button>
+    </div>
+  );
+}
+
+export default function Footer() {
 export default function Footer() {
   return (
     <footer
@@ -51,6 +87,11 @@ export default function Footer() {
               Curated vinyl for those who believe music sounds better on wax.
               Discover rare pressings, new releases, and timeless classics.
             </p>
+{/* Newsletter */}
+<div className="mt-2">
+  <p className="text-sm font-medium text-cream/80 mb-2">Get new arrivals in your inbox</p>
+  <NewsletterForm />
+</div>
             <div className="flex items-center gap-3">
               {socials.map((s) => (
                 <a
