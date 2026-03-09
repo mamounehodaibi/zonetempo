@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import AppLogo from "@/components/ui/AppLogo";
 import Icon from "@/components/ui/AppIcon";
-
+import { useCart } from "@/lib/cart-context";
 interface CartItem {
   id: string;
   count: number;
@@ -25,8 +25,8 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [cartCount] = useState(2);
-  const [wishlistCount] = useState(3);
+ const { count: cartCount } = useCart();
+const [wishlistCount] = useState(0);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const mockSuggestions = [
