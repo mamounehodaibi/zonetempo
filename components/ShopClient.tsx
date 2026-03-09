@@ -197,7 +197,7 @@ useEffect(() => {
               key={i}
               className="w-full flex items-center gap-3 px-4 py-3 text-sm text-ink/70 hover:bg-cream-dark hover:text-ink transition-colors text-left"
               onMouseDown={() => {
-                setSearchQuery(s.split(" – ")[0]);
+                setSearchQuery(s.split(" — ")[0]);
                 setShowSuggestions(false);
               }}>
               
