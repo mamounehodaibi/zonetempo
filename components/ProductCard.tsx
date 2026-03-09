@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { useCart } from "@/lib/cart-context";
 import Link from "next/link";
 import AppImage from "@/components/ui/AppImage";
 import Icon from "@/components/ui/AppIcon";
@@ -32,10 +33,20 @@ export default function ProductCard({ product, viewMode }: ProductCardProps) {
   const [wishlisted, setWishlisted] = useState(false);
   const [inCart, setInCart] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const { addToCart } = useCart();
 
-  const handleCart = (e: React.MouseEvent) => {
+  const handleCart = async (e: React.MouseEvent) => {
     e.preventDefault();
     if (!inCart) {
+      await addToCart({
+        product_id: product.id,
+        title: product.title,
+        artist: product.artist,
+        price: product.price,
+        image: product.image,
+        condition: product.condition,
+        quantity: 1,
+      });
       setInCart(true);
       setTimeout(() => setInCart(false), 2500);
     }
