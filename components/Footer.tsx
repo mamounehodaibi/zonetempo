@@ -64,7 +64,7 @@ function NewsletterForm() {
   );
 }
 
-export default function Footer() {
+
 export default function Footer() {
   return (
     <footer
