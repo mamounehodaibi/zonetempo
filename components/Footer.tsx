@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import AppLogo from "@/components/ui/AppLogo";
 import Icon from "@/components/ui/AppIcon";
 
 const footerLinks = {
@@ -41,14 +40,13 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-6 gap-8 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2">
-            <Link href="/homepage" className="inline-block mb-5">
-              <AppLogo
-                size={36}
-                iconName="MusicalNoteIcon"
-                text="Zonetempo"
-                className="brightness-0 invert"
-              />
-            </Link>
+            <Link href="/" className="inline-block mb-5">
+  <img
+    src="/assets/images/zonetempo-logo.svg"
+    alt="Zonetempo"
+    className="h-12 w-auto brightness-0 invert"
+  />
+</Link>
             <p className="text-sm text-cream/50 leading-relaxed max-w-xs mb-6">
               Curated vinyl for those who believe music sounds better on wax.
               Discover rare pressings, new releases, and timeless classics.
