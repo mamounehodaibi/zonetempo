@@ -31,9 +31,8 @@ export default function ContactPage() {
           <div className="mb-12">
             <span className="section-label block mb-2">Get In Touch</span>
             <h1 className="font-display font-medium text-ink text-4xl md:text-5xl">Contact Us</h1>
-            <p className="text-muted mt-3 max-w-xl">Have a question about an order, looking for a specific record, or just want to talk vinyl? We would love to hear from you.</p>
+            <p className="text-muted mt-3 max-w-xl">Have a question about a record? We would love to hear from you.</p>
           </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             <div className="space-y-8">
               <div>
@@ -50,13 +49,7 @@ export default function ContactPage() {
                 <h3 className="font-display font-medium text-ink text-lg mb-3">Follow Us</h3>
                 <div className="space-y-3">
                   {socials.map((s) => (
-                    
-                      key={s.name}
-                      href={s.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-3 group"
-                    >
+                    <a key={s.name} href={s.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 group">
                       <div className="w-9 h-9 rounded-full bg-cream-dark flex items-center justify-center text-sm font-bold text-ink group-hover:bg-orange group-hover:text-white transition-colors">
                         {s.name[0]}
                       </div>
@@ -69,19 +62,12 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-
             <div className="lg:col-span-2">
               {sent ? (
                 <div className="bg-white rounded-3xl p-8 shadow-card text-center py-16">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl text-green-600">
-                    OK
-                  </div>
                   <h3 className="font-display font-medium text-ink text-2xl mb-2">Message Sent!</h3>
                   <p className="text-muted">We will get back to you within 24 hours.</p>
-                  <button
-                    onClick={() => { setSent(false); setName(""); setEmail(""); setSubject(""); setMessage(""); }}
-                    className="mt-6 px-6 py-2.5 border border-ink/20 rounded-full text-sm font-medium hover:border-orange hover:text-orange transition-colors"
-                  >
+                  <button onClick={() => { setSent(false); setName(""); setEmail(""); setSubject(""); setMessage(""); }} className="mt-6 px-6 py-2.5 border border-ink/20 rounded-full text-sm font-medium hover:border-orange hover:text-orange transition-colors">
                     Send Another Message
                   </button>
                 </div>
@@ -99,11 +85,11 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-ink mb-1.5">Subject</label>
-                    <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What's this about?" className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm" />
+                    <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="What is this about?" className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-ink mb-1.5">Message</label>
-                    <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Tell us what's on your mind..." rows={6} className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm resize-none" />
+                    <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Tell us what is on your mind..." rows={6} className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm resize-none" />
                   </div>
                   <button onClick={handleSubmit} className="w-full py-3 bg-orange text-white rounded-full font-semibold hover:bg-orange-light transition-colors">
                     Send Message
