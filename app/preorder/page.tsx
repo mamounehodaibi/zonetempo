@@ -4,95 +4,128 @@ import React, { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const UPCOMING = [
-  { id: 1, title: "In Rainbows", artist: "Radiohead", genre: "Alternative", releaseDate: "April 15, 2025", price: 44.99, limited: true, description: "A deluxe reissue of Radiohead's landmark 2007 album on 180g double vinyl with remastered audio." },
-  { id: 2, title: "Blonde", artist: "Frank Ocean", genre: "R&B", releaseDate: "May 3, 2025", price: 49.99, limited: true, description: "The long-awaited official vinyl pressing of Frank Ocean's critically acclaimed 2016 masterpiece." },
-  { id: 3, title: "To Pimp a Butterfly", artist: "Kendrick Lamar", genre: "Hip-Hop", releaseDate: "May 20, 2025", price: 46.99, limited: false, description: "A stunning repress of Kendrick Lamar's definitive statement on race, identity, and artistry." },
-  { id: 4, title: "Vespertine", artist: "Bjork", genre: "Electronic", releaseDate: "June 1, 2025", price: 42.99, limited: true, description: "Bjork's intimate and intricate 2001 album finally gets the vinyl treatment it deserves." },
-  { id: 5, title: "Madvillainy", artist: "Madvillain", genre: "Hip-Hop", releaseDate: "June 14, 2025", price: 48.99, limited: true, description: "The cult classic collaboration between MF DOOM and Madlib returns in a limited pressing." },
-  { id: 6, title: "Sea Change", artist: "Beck", genre: "Folk", releaseDate: "July 4, 2025", price: 39.99, limited: false, description: "Beck's most personal and melancholic album reissued on audiophile-grade vinyl." },
+const INITIAL_REQUESTS = [
+  { id: 1, title: "Blonde", artist: "Frank Ocean", genre: "R&B", votes: 142, requestedBy: "marcus_vinyl" },
+  { id: 2, title: "Madvillainy", artist: "Madvillain", genre: "Hip-Hop", votes: 98, requestedBy: "cratedigger99" },
+  { id: 3, title: "In Rainbows", artist: "Radiohead", genre: "Alternative", votes: 87, requestedBy: "analogsoul" },
+  { id: 4, title: "Vespertine", artist: "Bjork", genre: "Electronic", votes: 64, requestedBy: "waxpoetic" },
+  { id: 5, title: "Sea Change", artist: "Beck", genre: "Folk", votes: 51, requestedBy: "needledrop" },
 ];
 
-export default function PreorderPage() {
-  const [notified, setNotified] = useState<number[]>([]);
-  const [email, setEmail] = useState("");
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+export default function WishlistPage() {
+  const [requests, setRequests] = useState(INITIAL_REQUESTS);
+  const [voted, setVoted] = useState<number[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({ title: "", artist: "", genre: "", name: "" });
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleNotify = (id: number) => {
-    if (!email) { alert("Please enter your email first."); return; }
-    setNotified((prev) => [...prev, id]);
-    setSelectedId(null);
+  const handleVote = (id: number) => {
+    if (voted.includes(id)) return;
+    setVoted((prev) => [...prev, id]);
+    setRequests((prev) => prev.map((r) => r.id === id ? { ...r, votes: r.votes + 1 } : r).sort((a, b) => b.votes - a.votes));
+  };
+
+  const handleSubmit = () => {
+    if (!form.title || !form.artist) return;
+    const newRequest = {
+      id: Date.now(),
+      title: form.title,
+      artist: form.artist,
+      genre: form.genre || "Other",
+      votes: 1,
+      requestedBy: form.name || "anonymous",
+    };
+    setRequests((prev) => [newRequest, ...prev].sort((a, b) => b.votes - a.votes));
+    setForm({ title: "", artist: "", genre: "", name: "" });
+    setShowForm(false);
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
   };
 
   return (
     <div className="min-h-screen bg-cream">
       <Header />
       <main className="pt-24 pb-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
           {/* Header */}
-          <div className="mb-12">
-            <span className="section-label block mb-2">Coming Soon</span>
-            <h1 className="font-display font-medium text-ink text-4xl md:text-5xl">Preorder & Upcoming</h1>
-            <p className="text-muted mt-3 max-w-xl">Reserve your copy before they sell out. Limited pressings go fast — sign up to be notified the moment they drop.</p>
-          </div>
-
-          {/* Email Input */}
-          <div className="bg-ink rounded-2xl p-6 mb-12 flex flex-col sm:flex-row items-center gap-4">
-            <div className="flex-1">
-              <p className="text-cream font-display text-lg font-medium">Get notified on new drops</p>
-              <p className="text-cream/50 text-sm mt-1">Enter your email and click notify on any record below.</p>
+          <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <span className="section-label block mb-2">Community</span>
+              <h1 className="font-display font-medium text-ink text-4xl md:text-5xl">Record Wishlist</h1>
+              <p className="text-muted mt-3 max-w-xl">Request a record you want us to stock. Vote for the ones you love. We restock based on demand.</p>
             </div>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="px-4 py-3 rounded-xl bg-white/10 border border-white/20 text-cream placeholder-cream/30 outline-none focus:border-orange transition-colors text-sm w-full sm:w-72"
-            />
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="px-6 py-3 bg-orange text-white rounded-full font-semibold hover:bg-orange-light transition-colors text-sm flex-shrink-0"
+            >
+              + Request a Record
+            </button>
           </div>
 
-          {/* Records Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {UPCOMING.map((record) => (
-              <div key={record.id} className="bg-white rounded-2xl shadow-card overflow-hidden flex flex-col">
-                <div className="bg-ink/5 h-48 flex items-center justify-center">
-                  <div className="w-32 h-32 rounded-full bg-ink flex items-center justify-center">
-                    <div className="w-10 h-10 rounded-full bg-cream/20" />
+          {/* Success message */}
+          {submitted && (
+            <div className="mb-6 px-4 py-3 bg-green-50 border border-green-200 rounded-xl text-green-600 text-sm font-medium">
+              Your request has been submitted! Others can now vote for it.
+            </div>
+          )}
+
+          {/* Request Form */}
+          {showForm && (
+            <div className="bg-white rounded-2xl shadow-card p-6 mb-8">
+              <h2 className="font-display font-medium text-ink text-xl mb-5">Request a Record</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Album Title</label>
+                  <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="e.g. Kind of Blue" className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Artist</label>
+                  <input type="text" value={form.artist} onChange={(e) => setForm({ ...form, artist: e.target.value })} placeholder="e.g. Miles Davis" className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Genre</label>
+                  <input type="text" value={form.genre} onChange={(e) => setForm({ ...form, genre: e.target.value })} placeholder="e.g. Jazz" className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-ink mb-1.5">Your Name (optional)</label>
+                  <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. cratedigger" className="w-full px-4 py-3 bg-cream rounded-xl border border-ink/10 text-ink placeholder-muted outline-none focus:border-orange transition-colors text-sm" />
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <button onClick={handleSubmit} className="px-6 py-2.5 bg-orange text-white rounded-full text-sm font-semibold hover:bg-orange-light transition-colors">Submit Request</button>
+                <button onClick={() => setShowForm(false)} className="px-6 py-2.5 border border-ink/20 rounded-full text-sm font-medium hover:border-orange hover:text-orange transition-colors">Cancel</button>
+              </div>
+            </div>
+          )}
+
+          {/* Requests List */}
+          <div className="space-y-3">
+            {requests.map((record, i) => (
+              <div key={record.id} className="bg-white rounded-2xl shadow-card p-5 flex items-center gap-5">
+                <div className="text-2xl font-display font-medium text-ink/20 w-8 text-center flex-shrink-0">
+                  {i + 1}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-display font-medium text-ink text-lg leading-tight">{record.title}</h3>
+                  <p className="text-muted text-sm">{record.artist}</p>
+                  <div className="flex items-center gap-3 mt-1">
+                    <span className="text-xs font-mono text-muted uppercase tracking-wider">{record.genre}</span>
+                    <span className="text-ink/20 text-xs">·</span>
+                    <span className="text-xs text-muted">by {record.requestedBy}</span>
                   </div>
                 </div>
-                <div className="p-6 flex flex-col flex-1">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-display font-medium text-ink text-lg leading-tight">{record.title}</h3>
-                      <p className="text-muted text-sm">{record.artist}</p>
-                    </div>
-                    {record.limited && (
-                      <span className="badge-new ml-2 flex-shrink-0">Limited</span>
-                    )}
-                  </div>
-                  <p className="text-xs font-mono text-muted uppercase tracking-wider mb-3">{record.genre}</p>
-                  <p className="text-sm text-muted leading-relaxed mb-4 flex-1">{record.description}</p>
-                  <div className="flex items-center justify-between mt-auto">
-                    <div>
-                      <p className="text-xs text-muted font-mono">Release Date</p>
-                      <p className="text-sm font-medium text-ink">{record.releaseDate}</p>
-                    </div>
-                    <p className="font-semibold text-ink">${record.price}</p>
-                  </div>
-                  {notified.includes(record.id) ? (
-                    <div className="mt-4 py-2.5 bg-green-50 border border-green-200 rounded-full text-center text-sm text-green-600 font-medium">
-                      You will be notified
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handleNotify(record.id)}
-                      className="mt-4 py-2.5 bg-orange text-white rounded-full text-sm font-semibold hover:bg-orange-light transition-colors"
-                    >
-                      Notify Me
-                    </button>
-                  )}
-                </div>
+                <button
+                  onClick={() => handleVote(record.id)}
+                  className={`flex flex-col items-center gap-1 px-4 py-3 rounded-xl border transition-all flex-shrink-0 ${
+                    voted.includes(record.id)
+                      ? "bg-orange/10 border-orange text-orange"
+                      : "border-ink/10 text-muted hover:border-orange hover:text-orange"
+                  }`}
+                >
+                  <span className="text-lg leading-none">{voted.includes(record.id) ? "▲" : "△"}</span>
+                  <span className="text-sm font-bold font-mono">{record.votes}</span>
+                </button>
               </div>
             ))}
           </div>
