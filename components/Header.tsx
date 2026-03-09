@@ -117,7 +117,7 @@ const [wishlistCount] = useState(0);
 
               {/* Wishlist */}
               <Link
-                href="/auth"
+                href="/account"
                 className="relative p-2 rounded-full hover:bg-cream-dark transition-colors hidden sm:flex"
                 aria-label="Wishlist"
               >
@@ -145,7 +145,7 @@ const [wishlistCount] = useState(0);
 
               {/* Account */}
               <Link
-                href="/auth"
+                href="/account"
                 className="hidden sm:flex items-center gap-2 ml-1 px-4 py-2 rounded-full border border-ink/15 hover:border-orange hover:text-orange text-sm font-medium transition-all duration-200"
                 style={{ fontFamily: "var(--font-body)" }}
               >
@@ -287,7 +287,7 @@ const [wishlistCount] = useState(0);
 
             <div className="px-5 pb-8 space-y-3 border-t border-ink/10 pt-5">
               <Link
-                href="/auth"
+                href="/account"
                 className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-full bg-ink text-cream text-sm font-medium"
                 onClick={() => setMobileOpen(false)}
               >
